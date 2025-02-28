@@ -1,0 +1,45 @@
+<!-- dice-roller-client/client.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dice Roller Client</title>
+</head>
+<body>
+  <h1>Dice Roller Client</h1>
+  <button id="clientRoll">Roll Dice via API</button>
+  <p id="clientResult"></p>
+
+  <script>
+    // Replace with your Azure-deployed API URL when ready
+    const apiBaseUrl = 'http://localhost:3000';
+
+    // Function to roll the dice using the remote API
+    function rollDice() {
+      fetch(apiBaseUrl + '/api/roll')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('clientResult').textContent = 'Dice roll: ' + data.result;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('clientResult').textContent = 'Error: ' + error;
+        });
+    }
+
+    document.getElementById('clientRoll').addEventListener('click', rollDice);
+
+    // Wake up the API server asynchronously
+    fetch(apiBaseUrl + '/api/wakeup')
+      .then(response => response.text())
+      .then(data => console.log('Server wake-up response:', data))
+      .catch(error => console.error('Error on wake-up:', error));
+
+    // Call the no-CORS endpoint to intentionally trigger a CORS error.
+    fetch(apiBaseUrl + '/api/no-cors')
+      .then(response => response.json())
+      .then(data => console.log('Data from no-CORS endpoint:', data))
+      .catch(error => console.error('Expected CORS error:', error));
+  </script>
+</body>
+</html>

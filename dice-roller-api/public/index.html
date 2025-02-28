@@ -1,0 +1,31 @@
+<!-- dice-roller-api/public/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dice Roller API Test</title>
+</head>
+<body>
+  <h1>Dice Roller API Test Page</h1>
+  <button id="rollButton">Roll Dice</button>
+  <p id="rollResult"></p>
+
+  <script>
+    // Test /api/roll endpoint
+    document.getElementById('rollButton').addEventListener('click', function() {
+      fetch('/api/roll')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('rollResult').textContent = 'Dice roll: ' + data.result;
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    // Automatically call /api/wakeup on page load
+    fetch('/api/wakeup')
+      .then(response => response.text())
+      .then(data => console.log('Wakeup response:', data))
+      .catch(error => console.error('Error:', error));
+  </script>
+</body>
+</html>
