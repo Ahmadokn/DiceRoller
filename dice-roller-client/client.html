@@ -1,45 +1,95 @@
-<!-- dice-roller-client/client.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Dice Roller Client</title>
+  <!-- CSS links -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      min-height: 100vh;
+      color: #fff;
+    }
+    .container {
+      margin-top: 80px;
+    }
+    .card {
+      background: rgb(255, 255, 255);
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    h1 {
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    #clientResult {
+      margin-top: 20px;
+      font-size: 2em;
+      font-weight: bold;
+      min-height: 50px;
+    }
+    .btn-roll {
+      font-size: 1.2em;
+      padding: 10px 30px;
+      transition: transform 0.2s;
+    }
+    .btn-roll:hover {
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 <body>
-  <h1>Dice Roller Client</h1>
-  <button id="clientRoll">Roll Dice via API</button>
-  <p id="clientResult"></p>
-
+  <div class="container text-center">
+    <div class="card p-4 mx-auto" style="max-width: 500px;">
+      <h1 class="animate__animated animate__fadeInDown">Dice Roller</h1>
+      <button id="clientRoll" class="btn btn-primary btn-roll">
+        <i class="fas fa-dice"></i> Roll the Dice!
+      </button>
+      <div id="clientResult" class="animate__animated"></div>
+    </div>
+  </div>
+  
   <script>
-    // Replace with your Azure-deployed API URL when ready
+
     const apiBaseUrl = 'https://diceroller-ab-etbvg2hmaqfqa0hb.uaenorth-01.azurewebsites.net';
 
-    // Function to roll the dice using the remote API
+
     function rollDice() {
+      const resultContainer = document.getElementById('clientResult');
+      resultContainer.textContent = 'Rolling...';
+      resultContainer.classList.remove('animate__bounceIn');
+      
       fetch(apiBaseUrl + '/api/roll')
         .then(response => response.json())
         .then(data => {
-          document.getElementById('clientResult').textContent = 'Dice roll: ' + data.result;
+          resultContainer.textContent = 'Dice roll: ' + data.result;
+          resultContainer.classList.add('animate__bounceIn');
         })
         .catch(error => {
           console.error('Error:', error);
-          document.getElementById('clientResult').textContent = 'Error: ' + error;
+          resultContainer.textContent = 'Error: ' + error;
         });
     }
 
     document.getElementById('clientRoll').addEventListener('click', rollDice);
 
-    // Wake up the API server asynchronously
+   
     fetch(apiBaseUrl + '/api/wakeup')
       .then(response => response.text())
       .then(data => console.log('Server wake-up response:', data))
       .catch(error => console.error('Error on wake-up:', error));
 
-    // Call the no-CORS endpoint to intentionally trigger a CORS error.
+
     fetch(apiBaseUrl + '/api/no-cors')
       .then(response => response.json())
       .then(data => console.log('Data from no-CORS endpoint:', data))
       .catch(error => console.error('Expected CORS error:', error));
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
